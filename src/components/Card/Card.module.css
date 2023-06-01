@@ -13,6 +13,7 @@
 
 .off {
     visibility: hidden;
+    scale: 0;
 }
 
 .card:hover {
