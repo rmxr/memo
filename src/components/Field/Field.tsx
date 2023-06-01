@@ -20,7 +20,13 @@ function Field() {
     });
     setField(newField);
   }, []);
-  const handleCards = () => {
+  React.useEffect(() => {
+    console.log(openCards);
+    setTimeout(() => {
+      handleCards();
+    }, "1000");
+  }, [openCards]);
+  function handleCards() {
     if (openCards.length == 2) {
       if (openCards[0].url === openCards[1].url) {
         const newField = [...field];
@@ -50,7 +56,7 @@ function Field() {
     }
     console.log(openCards);
     return;
-  };
+  }
   const handleClick = (index: number, url: string) => {
     const newField = [...field];
     newField[index] = { ...field[index], flip: true };
@@ -60,7 +66,6 @@ function Field() {
       newOpenCards.push({ index: index, url: url });
       setOpenCards(newOpenCards);
     }
-    handleCards();
   };
 
   return (
