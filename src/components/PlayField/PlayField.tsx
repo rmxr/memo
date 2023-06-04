@@ -1,11 +1,11 @@
-import styles from "./Field.module.css";
+import styles from "./PlayField.module.css";
 import Card from "../Card/Card";
 import React from "react";
 import { initialImages } from "../../constants/initialImages";
-import { IOpenCardsItem, IPlayingFieldItem } from "../../utils/types";
+import { IOpenCardsItem, IPlayingFieldItem } from "../../types/types";
 import { shuffleArray } from "../../utils/util";
 
-function Field() {
+function PlayField() {
   const [openCards, setOpenCards] = React.useState<IOpenCardsItem[]>([]);
   const [field, setField] = React.useState<IPlayingFieldItem[]>([]);
   const images = [...initialImages, ...initialImages];
@@ -19,14 +19,9 @@ function Field() {
       };
     });
     setField(newField);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  React.useEffect(() => {
-    console.log(openCards);
-    setTimeout(() => {
-      handleCards();
-    }, "1000");
-  }, [openCards]);
-  function handleCards() {
+  const handleCards = React.useCallback(() => {
     if (openCards.length == 2) {
       if (openCards[0].url === openCards[1].url) {
         const newField = [...field];
@@ -54,10 +49,18 @@ function Field() {
         setOpenCards([]);
       }
     }
-    console.log(openCards);
     return;
-  }
+  }, [field, openCards]);
+  React.useEffect(() => {
+    setTimeout(() => {
+      handleCards();
+    }, 1000);
+  }, [handleCards, openCards]);
+
   const handleClick = (index: number, url: string) => {
+    if (openCards.length == 2) {
+      return;
+    }
     const newField = [...field];
     newField[index] = { ...field[index], flip: true };
     setField(newField);
@@ -85,4 +88,4 @@ function Field() {
   );
 }
 
-export default Field;
+export default PlayField;

@@ -1,8 +1,8 @@
 import "./App.css";
-import Field from "./components/Field/Field";
+import PlayField from "./components/PlayField/PlayField";
 
 function App() {
-  return <Field />;
+  return <PlayField />;
 }
 
 export default App;

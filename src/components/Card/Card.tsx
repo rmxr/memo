@@ -1,7 +1,5 @@
 import styles from "./Card.module.css";
-const back =
-  "https://images.unsplash.com/photo-1550537687-c91072c4792d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80";
-
+import back from "../../assets/back.jpeg";
 function Card({
   image,
   index,
