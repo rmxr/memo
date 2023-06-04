@@ -2,22 +2,18 @@ import styles from "./Card.module.css";
 import back from "../../assets/back.jpeg";
 function Card({
   image,
-  index,
   off,
   flip,
   clickHandler,
 }: {
   image: string;
-  index: number;
   off: boolean;
   flip: boolean;
-  clickHandler: (index: number, url: string) => void;
+  clickHandler: () => void;
 }) {
   return (
     <div
-      onClick={() => {
-        clickHandler(index, image);
-      }}
+      onClick={clickHandler}
       className={`${styles.card} ${!flip ? styles.flipped : ""} ${
         off ? styles.off : ""
       }`}

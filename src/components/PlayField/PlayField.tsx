@@ -73,17 +73,20 @@ function PlayField() {
 
   return (
     <div className={styles.container}>
-      {field &&
-        field.map(({ url, flip, off }, index) => (
+      {field.map(({ url, flip, off }, index) => {
+        const clickHandler = () => {
+          handleClick(index, url);
+        };
+        return (
           <Card
             flip={flip}
             off={off}
-            index={index}
             key={index}
             image={url}
-            clickHandler={handleClick}
+            clickHandler={clickHandler}
           />
-        ))}
+        );
+      })}
     </div>
   );
 }
