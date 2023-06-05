@@ -6,6 +6,7 @@
   transform-style: preserve-3d;
   position: relative;
   cursor: pointer;
+  transform: rotateY(180deg);
 }
 
 .off {
@@ -22,7 +23,7 @@
 }
 
 .flipped {
-  transform: rotateY(180deg);
+  transform: rotateY(0deg);
 }
 
 .front,

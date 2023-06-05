@@ -14,7 +14,7 @@ function Card({
   return (
     <div
       onClick={clickHandler}
-      className={`${styles.card} ${!flip ? styles.flipped : ""} ${
+      className={`${styles.card} ${flip ? styles.flipped : ""} ${
         off ? styles.off : ""
       }`}
     >
