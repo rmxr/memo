@@ -54,16 +54,18 @@ function PlayField() {
   }, [handleCards, openCards]);
 
   const handleClick = (index: number, url: string) => {
-    if (openCards.length == 2) {
+    if (openCards.length === 2) {
+      return;
+    }
+    const card = field[index];
+    if (card.flip) {
       return;
     }
     const newField = [...field];
     newField[index] = { ...field[index], flip: true };
     setField(newField);
-    if (openCards.length == 0 || openCards[0].index !== index) {
-      const newOpenCards = [...openCards];
-      newOpenCards.push({ index: index, url: url });
-      setOpenCards(newOpenCards);
+    if (openCards.length < 2) {
+      setOpenCards([...openCards, { index, url }]);
     }
   };
 
