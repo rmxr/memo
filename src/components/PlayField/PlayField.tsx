@@ -5,24 +5,20 @@ import { initialImages } from "../../constants/initialImages";
 import { IOpenCardsItem, IPlayingFieldItem } from "../../types/types";
 import { shuffleArray } from "../../utils/util";
 
+const images = shuffleArray([...initialImages, ...initialImages]);
+const initialField: IPlayingFieldItem[] = images.map((url) => {
+  return {
+    url,
+    flip: false,
+    off: false,
+  };
+});
+
 function PlayField() {
   const [openCards, setOpenCards] = React.useState<IOpenCardsItem[]>([]);
-  const [field, setField] = React.useState<IPlayingFieldItem[]>([]);
-  const images = [...initialImages, ...initialImages];
-  shuffleArray(images);
-  React.useEffect(() => {
-    const newField = images.map((image) => {
-      return {
-        url: image,
-        flip: false,
-        off: false,
-      };
-    });
-    setField(newField);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const [field, setField] = React.useState<IPlayingFieldItem[]>(initialField);
   const handleCards = React.useCallback(() => {
-    if (openCards.length == 2) {
+    if (openCards.length === 2) {
       if (openCards[0].url === openCards[1].url) {
         const newField = [...field];
         newField[openCards[0].index] = {
