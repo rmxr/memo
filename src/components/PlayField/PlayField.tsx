@@ -6,7 +6,7 @@ import { IOpenCardsItem, IPlayingFieldItem } from "../../types/types";
 import { shuffleArray } from "../../utils/array";
 
 const images = shuffleArray([...initialImages, ...initialImages]);
-const initialField: IPlayingFieldItem[] = images.map((url) => {
+const initialCards: IPlayingFieldItem[] = images.map((url) => {
   return {
     url,
     flip: false,
@@ -17,7 +17,8 @@ const MAX_OPEN_CARDS = 2;
 
 function PlayField() {
   const [openCards, setOpenCards] = React.useState<IOpenCardsItem[]>([]);
-  const [cards, setCards] = React.useState<IPlayingFieldItem[]>(initialField);
+  const [cards, setCards] = React.useState<IPlayingFieldItem[]>(initialCards);
+  const areBothCardsOpen = openCards.length === MAX_OPEN_CARDS;
   const checkResult = React.useCallback(() => {
     const [cardOne, cardTwo] = openCards;
     const newCards = [...cards];
@@ -38,14 +39,14 @@ function PlayField() {
   }, [cards, openCards]);
   React.useEffect(() => {
     setTimeout(() => {
-      if (openCards.length === MAX_OPEN_CARDS) {
+      if (areBothCardsOpen) {
         checkResult();
       }
     }, 1000);
-  }, [checkResult, openCards]);
+  }, [areBothCardsOpen, checkResult, openCards]);
 
   const handleClick = (index: number, url: string) => {
-    if (openCards.length === MAX_OPEN_CARDS) {
+    if (areBothCardsOpen) {
       return;
     }
     const card = cards[index];
