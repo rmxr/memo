@@ -1,8 +1,8 @@
 export function shuffleArray(arr: string[]) {
   const array = [...arr];
-  for (let i = array.length - 1; i > 0; i--) {
+  for (let index = array.length - 1; index > 0; index--) {
     const newIndex = Math.floor(Math.random() * array.length);
-    [array[i], array[newIndex]] = [array[newIndex], array[i]];
+    [array[index], array[newIndex]] = [array[newIndex], array[index]];
   }
   return array;
 }

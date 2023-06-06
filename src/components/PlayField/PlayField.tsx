@@ -3,7 +3,7 @@ import Card from "../Card/Card";
 import React from "react";
 import { initialImages } from "../../constants/initialImages";
 import { IOpenCardsItem, IPlayingFieldItem } from "../../types/types";
-import { shuffleArray } from "../../utils/util";
+import { shuffleArray } from "../../utils/array";
 
 const images = shuffleArray([...initialImages, ...initialImages]);
 const initialField: IPlayingFieldItem[] = images.map((url) => {
@@ -13,65 +13,56 @@ const initialField: IPlayingFieldItem[] = images.map((url) => {
     off: false,
   };
 });
+const MAX_OPEN_CARDS = 2;
 
 function PlayField() {
   const [openCards, setOpenCards] = React.useState<IOpenCardsItem[]>([]);
-  const [field, setField] = React.useState<IPlayingFieldItem[]>(initialField);
-  const handleCards = React.useCallback(() => {
-    if (openCards.length === 2) {
-      if (openCards[0].url === openCards[1].url) {
-        const newField = [...field];
-        newField[openCards[0].index] = {
-          ...field[openCards[0].index],
-          off: true,
-        };
-        newField[openCards[1].index] = {
-          ...field[openCards[1].index],
-          off: true,
-        };
-        setField(newField);
-        setOpenCards([]);
-      } else {
-        const newField = [...field];
-        newField[openCards[0].index] = {
-          ...field[openCards[0].index],
-          flip: false,
-        };
-        newField[openCards[1].index] = {
-          ...field[openCards[1].index],
-          flip: false,
-        };
-        setField(newField);
-        setOpenCards([]);
-      }
+  const [cards, setCards] = React.useState<IPlayingFieldItem[]>(initialField);
+  const checkResult = React.useCallback(() => {
+    const [cardOne, cardTwo] = openCards;
+    const newCards = [...cards];
+    const newCardOne = newCards[cardOne.index];
+    const newCardTwo = newCards[cardTwo.index];
+    const isSuccess = cardOne.url === cardTwo.url;
+
+    if (isSuccess) {
+      newCardOne.off = true;
+      newCardTwo.off = true;
+    } else {
+      newCardOne.flip = false;
+      newCardTwo.flip = false;
     }
-    return;
-  }, [field, openCards]);
+
+    setCards(newCards);
+    setOpenCards([]);
+  }, [cards, openCards]);
   React.useEffect(() => {
     setTimeout(() => {
-      handleCards();
+      if (openCards.length === MAX_OPEN_CARDS) {
+        checkResult();
+      }
     }, 1000);
-  }, [handleCards, openCards]);
+  }, [checkResult, openCards]);
 
   const handleClick = (index: number, url: string) => {
-    if (openCards.length === 2) {
+    if (openCards.length === MAX_OPEN_CARDS) {
       return;
     }
-    const card = field[index];
+    const card = cards[index];
     if (card.flip) {
       return;
     }
-    const newField = [...field];
-    newField[index] = { ...field[index], flip: true };
-    setField(newField);
-    if (openCards.length < 2) {
+    const newCards = [...cards];
+    newCards[index] = { ...card, flip: true };
+    setCards(newCards);
+    if (openCards.length < MAX_OPEN_CARDS) {
       setOpenCards([...openCards, { index, url }]);
     }
   };
 
   return (
     <div className={styles.container}>
-      {field.map(({ url, flip, off }, index) => {
+      {cards.map(({ url, flip, off }, index) => {
         const clickHandler = () => {
           handleClick(index, url);
         };

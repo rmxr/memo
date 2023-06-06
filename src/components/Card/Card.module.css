@@ -1,5 +1,4 @@
 .card {
-  --card-width: 250px;
   width: var(--card-width);
   aspect-ratio: 5/3;
   transition: 0.6s;

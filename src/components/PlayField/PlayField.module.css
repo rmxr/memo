@@ -1,8 +1,9 @@
 .container {
+  --card-width: 250px;
   perspective: 1000px;
   display: grid;
   gap: 20px;
-  grid-template-columns: repeat(4, 250px);
+  grid-template-columns: repeat(4, var(--card-width));
   grid-template-rows: repeat(3, 150px);
   justify-items: center;
   align-items: center;
