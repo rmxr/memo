@@ -2,29 +2,31 @@ import styles from "./PlayField.module.css";
 import Card from "../Card/Card";
 import React from "react";
 import { initialImages } from "../../constants/initialImages";
-import { IOpenCardsItem, IPlayingFieldItem } from "../../types/types";
+import { CardsMap, IPlayingFieldItem } from "../../types/types";
 import { shuffleArray } from "../../utils/array";
 
 const images = shuffleArray([...initialImages, ...initialImages]);
-const initialCards: IPlayingFieldItem[] = images.map((url) => {
-  return {
-    url,
-    flip: false,
-    off: false,
-  };
-});
+
+const initialCardsById = images.reduce<CardsMap>((acc, url) => {
+  const id = crypto.randomUUID();
+
+  acc[id] = { id, url, flip: false, off: false };
+
+  return acc;
+}, {});
 const MAX_OPEN_CARDS = 2;
 
 function PlayField() {
-  const [openCards, setOpenCards] = React.useState<IOpenCardsItem[]>([]);
-  const [cards, setCards] = React.useState<IPlayingFieldItem[]>(initialCards);
-  const areBothCardsOpen = openCards.length === MAX_OPEN_CARDS;
+  const [openCardIds, setOpenCardIds] = React.useState<
+    IPlayingFieldItem["id"][]
+  >([]);
+  const [cardsById, setCardsById] = React.useState(initialCardsById);
+  const areBothCardsOpen = openCardIds.length === MAX_OPEN_CARDS;
   const checkResult = React.useCallback(() => {
-    const [cardOne, cardTwo] = openCards;
-    const newCards = [...cards];
-    const newCardOne = newCards[cardOne.index];
-    const newCardTwo = newCards[cardTwo.index];
-    const isSuccess = cardOne.url === cardTwo.url;
+    const newCards = { ...cardsById };
+    const newCardOne = newCards[openCardIds[0]];
+    const newCardTwo = newCards[openCardIds[1]];
+    const isSuccess = newCardOne.url === newCardTwo.url;
 
     if (isSuccess) {
       newCardOne.off = true;
@@ -34,44 +36,44 @@ function PlayField() {
       newCardTwo.flip = false;
     }
 
-    setCards(newCards);
-    setOpenCards([]);
-  }, [cards, openCards]);
+    setCardsById(newCards);
+    setOpenCardIds([]);
+  }, [cardsById, openCardIds]);
   React.useEffect(() => {
     setTimeout(() => {
       if (areBothCardsOpen) {
         checkResult();
       }
     }, 1000);
-  }, [areBothCardsOpen, checkResult, openCards]);
+  }, [areBothCardsOpen, checkResult, openCardIds]);
 
-  const handleClick = (index: number, url: string) => {
+  const handleClick = (id: string) => {
     if (areBothCardsOpen) {
       return;
     }
-    const card = cards[index];
+    const card = cardsById[id];
     if (card.flip) {
       return;
     }
-    const newCards = [...cards];
-    newCards[index] = { ...card, flip: true };
-    setCards(newCards);
-    if (openCards.length < MAX_OPEN_CARDS) {
-      setOpenCards([...openCards, { index, url }]);
+    const newCards = { ...cardsById };
+    newCards[id].flip = true;
+    setCardsById(newCards);
+    if (openCardIds.length < MAX_OPEN_CARDS) {
+      setOpenCardIds(openCardIds.concat(id));
     }
   };
 
   return (
     <div className={styles.container}>
-      {cards.map(({ url, flip, off }, index) => {
+      {Object.values(cardsById).map(({ id, url, flip, off }) => {
         const clickHandler = () => {
-          handleClick(index, url);
+          handleClick(id);
         };
         return (
           <Card
             flip={flip}
             off={off}
-            key={index}
+            key={id}
             image={url}
             clickHandler={clickHandler}
           />

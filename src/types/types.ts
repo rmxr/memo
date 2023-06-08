@@ -1,10 +1,8 @@
 export interface IPlayingFieldItem {
+  id: string;
   url: string;
   flip: boolean;
   off: boolean;
 }
 
-export interface IOpenCardsItem {
-  url: string;
-  index: number;
-}
+export type CardsMap = Record<string, IPlayingFieldItem>;
