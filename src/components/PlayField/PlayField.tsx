@@ -1,22 +1,11 @@
-import styles from "./PlayField.module.css";
-import Card from "../Card/Card";
 import React from "react";
-import { initialImages } from "../../constants/initialImages";
-import { CardsMap, IPlayingFieldItem } from "../../types/types";
-import { shuffleArray } from "../../utils/array";
+import Card from "../Card/Card";
+import { CardId } from "../../types/types";
+import styles from "./PlayField.module.css";
+import { getCardsById } from "./helpers";
 
-const images = shuffleArray([...initialImages, ...initialImages]);
-
-const cardsById = images.reduce<CardsMap>((acc, url) => {
-  const id = crypto.randomUUID();
-
-  acc[id] = { id, url };
-
-  return acc;
-}, {});
-
+const cardsById = getCardsById();
 const MAX_OPEN_CARDS = 2;
-type CardId = IPlayingFieldItem["id"];
 
 function PlayField() {
   const [openCardIds, setOpenCardIds] = React.useState<CardId[]>([]);
@@ -27,10 +16,10 @@ function PlayField() {
       return;
     }
 
-    const сardOne = cardsById[openCardIds[0]];
-    const сardTwo = cardsById[openCardIds[1]];
+    const openCardOne = cardsById[openCardIds[0]];
+    const openCardTwo = cardsById[openCardIds[1]];
 
-    if (сardOne.url === сardTwo.url) {
+    if (openCardOne.imageUrl === openCardTwo.imageUrl) {
       setSwitchedCardIds(switchedCardIds.concat(openCardIds));
     }
 
@@ -41,7 +30,7 @@ function PlayField() {
     setTimeout(checkResult, 1000);
   }, [checkResult]);
 
-  const handleClick = (id: CardId) => {
+  const handleClickCard = (id: CardId) => {
     if (openCardIds.length < MAX_OPEN_CARDS && !openCardIds.includes(id)) {
       setOpenCardIds(openCardIds.concat(id));
     }
@@ -49,20 +38,17 @@ function PlayField() {
 
   return (
     <div className={styles.container}>
-      {Object.values(cardsById).map(({ id, url }) => {
-        const clickHandler = () => {
-          handleClick(id);
-        };
-        return (
-          <Card
-            flip={openCardIds.includes(id)}
-            off={switchedCardIds.includes(id)}
-            key={id}
-            image={url}
-            clickHandler={clickHandler}
-          />
-        );
-      })}
+      {Object.values(cardsById).map(({ id, imageUrl }) => (
+        <Card
+          flip={openCardIds.includes(id)}
+          off={switchedCardIds.includes(id)}
+          key={id}
+          imageUrl={imageUrl}
+          onClick={() => {
+            handleClickCard(id);
+          }}
+        />
+      ))}
     </div>
   );
 }

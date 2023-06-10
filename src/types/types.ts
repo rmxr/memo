@@ -1,6 +1,8 @@
 export interface IPlayingFieldItem {
-  id: string;
-  url: string;
+  id: ReturnType<Crypto["randomUUID"]>;
+  imageUrl: string;
 }
 
-export type CardsMap = Record<string, IPlayingFieldItem>;
+export type CardId = IPlayingFieldItem["id"];
+
+export type CardsMap = Record<CardId, IPlayingFieldItem>;
