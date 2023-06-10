@@ -1,5 +1,5 @@
 import { initialImages } from "../../constants/initialImages";
-import { CardsMap } from "../../types/types";
+import { CardsMap } from "../../types/card";
 import { shuffleArray } from "../../utils/array";
 
 export const getCardsById = () => {

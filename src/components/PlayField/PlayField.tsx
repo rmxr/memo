@@ -1,6 +1,6 @@
 import React from "react";
 import Card from "../Card/Card";
-import { CardId } from "../../types/types";
+import { CardId } from "../../types/card";
 import styles from "./PlayField.module.css";
 import { getCardsById } from "./helpers";
 
