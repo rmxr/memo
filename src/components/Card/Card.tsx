@@ -1,25 +1,25 @@
 import styles from "./Card.module.css";
 import back from "../../assets/back.jpeg";
 function Card({
-  image,
+  imageUrl,
   off,
   flip,
-  clickHandler,
+  onClick,
 }: {
-  image: string;
+  imageUrl: string;
   off: boolean;
   flip: boolean;
-  clickHandler: () => void;
+  onClick: () => void;
 }) {
   return (
     <div
-      onClick={clickHandler}
+      onClick={onClick}
       className={`${styles.card} ${flip ? styles.flipped : ""} ${
         off ? styles.off : ""
       }`}
     >
       <div className={styles.front}>
-        <img className={styles.image} src={image} />
+        <img className={styles.image} src={imageUrl} />
       </div>
       <div className={styles.back}>
         <img className={styles.image} src={back} />
