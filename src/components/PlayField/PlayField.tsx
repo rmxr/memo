@@ -7,72 +7,56 @@ import { shuffleArray } from "../../utils/array";
 
 const images = shuffleArray([...initialImages, ...initialImages]);
 
-const initialCardsById = images.reduce<CardsMap>((acc, url) => {
+const cardsById = images.reduce<CardsMap>((acc, url) => {
   const id = crypto.randomUUID();
 
-  acc[id] = { id, url, flip: false, off: false };
+  acc[id] = { id, url };
 
   return acc;
 }, {});
+
 const MAX_OPEN_CARDS = 2;
+type CardId = IPlayingFieldItem["id"];
 
 function PlayField() {
-  const [openCardIds, setOpenCardIds] = React.useState<
-    IPlayingFieldItem["id"][]
-  >([]);
-  const [cardsById, setCardsById] = React.useState(initialCardsById);
-  const areBothCardsOpen = openCardIds.length === MAX_OPEN_CARDS;
+  const [openCardIds, setOpenCardIds] = React.useState<CardId[]>([]);
+  const [switchedCardIds, setSwitchedCardIds] = React.useState<CardId[]>([]);
+
   const checkResult = React.useCallback(() => {
-    const newCards = { ...cardsById };
-    const newCardOne = newCards[openCardIds[0]];
-    const newCardTwo = newCards[openCardIds[1]];
-    const isSuccess = newCardOne.url === newCardTwo.url;
-
-    if (isSuccess) {
-      newCardOne.off = true;
-      newCardTwo.off = true;
-    } else {
-      newCardOne.flip = false;
-      newCardTwo.flip = false;
+    if (openCardIds.length !== MAX_OPEN_CARDS) {
+      return;
     }
 
-    setCardsById(newCards);
+    const сardOne = cardsById[openCardIds[0]];
+    const сardTwo = cardsById[openCardIds[1]];
+
+    if (сardOne.url === сardTwo.url) {
+      setSwitchedCardIds(switchedCardIds.concat(openCardIds));
+    }
+
     setOpenCardIds([]);
-  }, [cardsById, openCardIds]);
-  React.useEffect(() => {
-    setTimeout(() => {
-      if (areBothCardsOpen) {
-        checkResult();
-      }
-    }, 1000);
-  }, [areBothCardsOpen, checkResult, openCardIds]);
+  }, [openCardIds, switchedCardIds]);
 
-  const handleClick = (id: string) => {
-    if (areBothCardsOpen) {
-      return;
-    }
-    const card = cardsById[id];
-    if (card.flip) {
-      return;
-    }
-    const newCards = { ...cardsById };
-    newCards[id].flip = true;
-    setCardsById(newCards);
-    if (openCardIds.length < MAX_OPEN_CARDS) {
+  React.useEffect(() => {
+    setTimeout(checkResult, 1000);
+  }, [checkResult]);
+
+  const handleClick = (id: CardId) => {
+    if (openCardIds.length < MAX_OPEN_CARDS && !openCardIds.includes(id)) {
       setOpenCardIds(openCardIds.concat(id));
     }
   };
 
   return (
     <div className={styles.container}>
-      {Object.values(cardsById).map(({ id, url, flip, off }) => {
+      {Object.values(cardsById).map(({ id, url }) => {
         const clickHandler = () => {
           handleClick(id);
         };
         return (
           <Card
-            flip={flip}
-            off={off}
+            flip={openCardIds.includes(id)}
+            off={switchedCardIds.includes(id)}
             key={id}
             image={url}
             clickHandler={clickHandler}
