@@ -21,9 +21,9 @@ function PlayField() {
 
     if (openCardOne.imageUrl === openCardTwo.imageUrl) {
       setSwitchedCardIds(switchedCardIds.concat(openCardIds));
+    } else {
+      setOpenCardIds([]);
     }
-
-    setOpenCardIds([]);
   }, [openCardIds, switchedCardIds]);
 
   React.useEffect(() => {
