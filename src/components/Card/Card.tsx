@@ -12,30 +12,41 @@ function Card({
   flip: boolean;
   onClick: () => void;
 }) {
-  const ref = React.useRef<HTMLDivElement>(document.createElement("div"));
+  const cardholderRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    let entryPoint = [0, 0];
-    const track = (moveEvent: MouseEvent) => {
-      moveEvent.stopPropagation();
-      ref.current.style.transform = `translate(${
-        (moveEvent.offsetX - entryPoint[0]) * 0.02
-      }px, ${(moveEvent.offsetY - entryPoint[1]) * 0.02}px)`;
+    if (!cardholderRef.current) {
+      return;
+    }
+    const element = cardholderRef.current;
+    let entryPoint = { offsetX: 0, offsetY: 0 };
+    function track(event: MouseEvent) {
+      element.style.transform = `translate(${
+        (event.offsetX - entryPoint.offsetX) * 0.02
+      }px, ${(event.offsetY - entryPoint.offsetY) * 0.02}px)`;
+    }
+
+    function startTracking(event: MouseEvent) {
+      entryPoint = { offsetX: event.offsetX, offsetY: event.offsetY };
+      element.addEventListener("mousemove", track);
+    }
+
+    function stopTracking() {
+      element.removeEventListener("mousemove", track);
+      element.removeAttribute("style");
+    }
+
+    element.addEventListener("mouseenter", startTracking);
+    element.addEventListener("mouseleave", stopTracking);
+
+    return function cleanup() {
+      element.removeEventListener("mouseenter", startTracking);
+      element.removeEventListener("mouseleave", stopTracking);
     };
-
-    ref.current.addEventListener("mouseenter", (event) => {
-      entryPoint = [event.offsetX, event.offsetY];
-      ref.current.addEventListener("mousemove", track);
-    });
-
-    ref.current.addEventListener("mouseleave", () => {
-      ref.current.removeEventListener("mousemove", track);
-      ref.current.removeAttribute("style");
-    });
-  }, [ref]);
+  }, [cardholderRef]);
 
   return (
-    <div className={styles.cardholder} ref={ref} onClick={onClick}>
+    <div className={styles.cardholder} ref={cardholderRef} onClick={onClick}>
       <div
         className={`${styles.card} ${flip ? styles.flipped : ""} ${
           off ? `${styles.off} ${styles.flipped}` : ""
