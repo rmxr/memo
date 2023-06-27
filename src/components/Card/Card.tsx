@@ -52,9 +52,6 @@ function Card({
     () => ({
       x: 0,
       y: 0,
-      onStart: () => {
-        console.log(xOffset, yOffset);
-      },
       config: {
         mass: 2,
         friction: 14,

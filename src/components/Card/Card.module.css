@@ -14,13 +14,13 @@
   scale: 0;
 }
 
-/*.cardholder:hover .card:not(.flipped) {*/
-/*  transform: translateZ(50px) rotateY(180deg);*/
-/*}*/
+.cardholder:hover .card:not(.flipped) {
+  transform: translateZ(50px) rotateY(180deg);
+}
 
-/*.cardholder:hover .card {*/
-/*  transform: translateZ(50px) rotateY(0deg);*/
-/*}*/
+.cardholder:hover .card {
+  transform: translateZ(50px) rotateY(0deg);
+}
 
 .card:active {
   width: calc(var(--card-width) * 0.9);
