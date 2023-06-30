@@ -15,8 +15,8 @@ function Card({
   onClick: () => void;
 }) {
   const cardholderRef = React.useRef<HTMLDivElement>(null);
-  let xOffset = 0;
-  let yOffset = 0;
+  // let xOffset = 0;
+  // let yOffset = 0;
 
   React.useEffect(() => {
     if (!cardholderRef.current) {
@@ -63,26 +63,26 @@ function Card({
 
   const handleMouseLeave = () => {
     if (cardholderRef.current) {
-      const regex = /translate\(([-\d.]+)px,\s*([-\d.]+)px\)/;
-      const matches = regex.exec(cardholderRef.current.style.cssText);
+      const regex =
+        /translate\((?<offsetX>[-\d.]+)px,\s*(?<offsetY>[-\d.]+)px\)/;
+      const transformValue = cardholderRef.current.style.transform;
+      const matches = regex.exec(transformValue);
 
-      if (matches) {
-        xOffset = parseFloat(matches[1]);
-        yOffset = parseFloat(matches[2]);
+      if (matches?.groups) {
+        const { offsetX, offsetY } = matches.groups;
+        springRef.start({
+          from: {
+            x: parseFloat(offsetX),
+            y: parseFloat(offsetY),
+          },
+          to: {
+            x: 0,
+            y: 0,
+          },
+        });
       }
     }
-    springRef.start({
-      from: {
-        x: xOffset,
-        y: yOffset,
-      },
-      to: {
-        x: 0,
-        y: 0,
-      },
-    });
   };
-
   const handleMouseEnter = () => {
     springRef.stop();
   };
