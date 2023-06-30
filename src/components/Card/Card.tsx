@@ -48,7 +48,7 @@ function Card({
     };
   }, [cardholderRef]);
 
-  const [springs, api] = useSpring(
+  const [springValues, springRef] = useSpring(
     () => ({
       x: 0,
       y: 0,
@@ -62,9 +62,8 @@ function Card({
   );
 
   const handleMouseLeave = () => {
-    const regex = /translate\(([-\d.]+)px,\s*([-\d.]+)px\)/;
-
     if (cardholderRef.current) {
+      const regex = /translate\(([-\d.]+)px,\s*([-\d.]+)px\)/;
       const matches = regex.exec(cardholderRef.current.style.cssText);
 
       if (matches) {
@@ -72,7 +71,7 @@ function Card({
         yOffset = parseFloat(matches[2]);
       }
     }
-    api.start({
+    springRef.start({
       from: {
         x: xOffset,
         y: yOffset,
@@ -85,7 +84,7 @@ function Card({
   };
 
   const handleMouseEnter = () => {
-    api.stop();
+    springRef.stop();
   };
 
   return (
@@ -95,7 +94,7 @@ function Card({
       onClick={onClick}
       onMouseLeave={handleMouseLeave}
       onMouseEnter={handleMouseEnter}
-      style={{ ...springs }}
+      style={springValues}
     >
       <div
         className={`${styles.card} ${flip ? styles.flipped : ""} ${
