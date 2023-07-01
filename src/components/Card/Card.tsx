@@ -1,7 +1,8 @@
 import styles from "./Card.module.css";
 import back from "../../assets/back.jpeg";
 import React from "react";
-import { useSpring, animated } from "@react-spring/web";
+import { animated } from "@react-spring/web";
+import { useSpringAnimation } from "../../utils/useSpringAnimation";
 
 function Card({
   imageUrl,
@@ -15,8 +16,6 @@ function Card({
   onClick: () => void;
 }) {
   const cardholderRef = React.useRef<HTMLDivElement>(null);
-  // let xOffset = 0;
-  // let yOffset = 0;
 
   React.useEffect(() => {
     if (!cardholderRef.current) {
@@ -48,44 +47,8 @@ function Card({
     };
   }, [cardholderRef]);
 
-  const [springValues, springRef] = useSpring(
-    () => ({
-      x: 0,
-      y: 0,
-      config: {
-        mass: 2,
-        friction: 14,
-        tension: 120,
-      },
-    }),
-    []
-  );
-
-  const handleMouseLeave = () => {
-    if (cardholderRef.current) {
-      const regex =
-        /translate\((?<offsetX>[-\d.]+)px,\s*(?<offsetY>[-\d.]+)px\)/;
-      const transformValue = cardholderRef.current.style.transform;
-      const matches = regex.exec(transformValue);
-
-      if (matches?.groups) {
-        const { offsetX, offsetY } = matches.groups;
-        springRef.start({
-          from: {
-            x: parseFloat(offsetX),
-            y: parseFloat(offsetY),
-          },
-          to: {
-            x: 0,
-            y: 0,
-          },
-        });
-      }
-    }
-  };
-  const handleMouseEnter = () => {
-    springRef.stop();
-  };
+  const { springValues, handleMouseEnter, handleMouseLeave } =
+    useSpringAnimation(cardholderRef);
 
   return (
     <animated.div
