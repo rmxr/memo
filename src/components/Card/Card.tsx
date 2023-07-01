@@ -1,6 +1,8 @@
 import styles from "./Card.module.css";
 import back from "../../assets/back.jpeg";
 import React from "react";
+import { useSpring, animated } from "@react-spring/web";
+
 function Card({
   imageUrl,
   off,
@@ -13,6 +15,8 @@ function Card({
   onClick: () => void;
 }) {
   const cardholderRef = React.useRef<HTMLDivElement>(null);
+  // let xOffset = 0;
+  // let yOffset = 0;
 
   React.useEffect(() => {
     if (!cardholderRef.current) {
@@ -33,7 +37,6 @@ function Card({
 
     function stopTracking() {
       element.removeEventListener("mousemove", track);
-      element.removeAttribute("style");
     }
 
     element.addEventListener("mouseenter", startTracking);
@@ -45,8 +48,54 @@ function Card({
     };
   }, [cardholderRef]);
 
+  const [springValues, springRef] = useSpring(
+    () => ({
+      x: 0,
+      y: 0,
+      config: {
+        mass: 2,
+        friction: 14,
+        tension: 120,
+      },
+    }),
+    []
+  );
+
+  const handleMouseLeave = () => {
+    if (cardholderRef.current) {
+      const regex =
+        /translate\((?<offsetX>[-\d.]+)px,\s*(?<offsetY>[-\d.]+)px\)/;
+      const transformValue = cardholderRef.current.style.transform;
+      const matches = regex.exec(transformValue);
+
+      if (matches?.groups) {
+        const { offsetX, offsetY } = matches.groups;
+        springRef.start({
+          from: {
+            x: parseFloat(offsetX),
+            y: parseFloat(offsetY),
+          },
+          to: {
+            x: 0,
+            y: 0,
+          },
+        });
+      }
+    }
+  };
+  const handleMouseEnter = () => {
+    springRef.stop();
+  };
+
   return (
-    <div className={styles.cardholder} ref={cardholderRef} onClick={onClick}>
+    <animated.div
+      className={styles.cardholder}
+      ref={cardholderRef}
+      onClick={onClick}
+      onMouseLeave={handleMouseLeave}
+      onMouseEnter={handleMouseEnter}
+      style={springValues}
+    >
       <div
         className={`${styles.card} ${flip ? styles.flipped : ""} ${
           off ? `${styles.off} ${styles.flipped}` : ""
@@ -59,7 +108,7 @@ function Card({
           <img className={styles.image} src={back} alt={"Card Back"} />
         </div>
       </div>
-    </div>
+    </animated.div>
   );
 }
 
